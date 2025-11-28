@@ -3,7 +3,7 @@
 * @author SomewhereOutInSpace
 * @license MIT
 * @description A fix for AFK detection under Wayland display servers.
-* @version 1.1.0
+* @version 1.0.1
 */
 
 const Dispatcher = BdApi.Webpack.getModule(m => m.dispatch && m.subscribe);
