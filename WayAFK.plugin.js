@@ -6,7 +6,7 @@
 * @version 1.0.1
 */
 
-const Dispatcher = BdApi.Webpack.getModule(m => m.dispatch && m.subscribe);
+const Dispatcher = BdApi.Webpack.getByKeys("actionLogger");
 const Patcher = BdApi.Patcher;
 
 var WayAFKConfig = {
@@ -38,6 +38,15 @@ module.exports = class WayAFK {
         
         // Start an interval that checks if we should go AFK ever 1000ms.
         this.interval = window.setInterval(() => this.checkElapsed(), 1000);
+
+        // Guard dispatcher
+        if (!Dispatcher || typeof Dispatcher.dispatch !== "function") {
+            console.error("[WayAFK] Could not find Dispatcher. Plugin disabled.");
+            if (BdApi.showToast) {
+                BdApi.showToast("WayAFK: Failed to hook dispatcher (see console)", {type: "error"});
+            }
+            return;
+        }
         
         // Patches the dispatcher - if we are AFK and an AFK event is fired,
         // this will unconditionally rewrite it to be true.
