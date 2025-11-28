@@ -98,7 +98,11 @@ module.exports = class WayAFK {
         timeoutInput.value = WayAFKConfig.timeout;
         timeoutInput.addEventListener("change", () => {
             WayAFKConfig.timeout = timeoutInput.value;
-            BdApi.saveData("WayAFK", "settings", WayAFKConfig);
+            if (BdApi.Data && typeof BdApi.Data.save === "function") {
+                BdApi.Data.save("WayAFK", "settings", WayAFKConfig);
+            } else if (BdApi.saveData) {
+                BdApi.saveData("WayAFK", "settings", WayAFKConfig);
+            }
         });
 
         panel.append(timeoutSetting);
