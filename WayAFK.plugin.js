@@ -3,7 +3,7 @@
 * @author SomewhereOutInSpace
 * @license MIT
 * @description A fix for AFK detection under Wayland display servers.
-* @version 1.0.0
+* @version 1.1.0
 */
 
 const Dispatcher = BdApi.Webpack.getModule(m => m.dispatch && m.subscribe);
@@ -23,7 +23,10 @@ module.exports = class WayAFK {
     
     start() {
         // Load configuration from disk.
-        WayAFKConfig = Object.assign({}, WayAFKConfig, BdApi.loadData("WayAFK", "settings"));
+        const saved = BdApi.Data && typeof BdApi.Data.load === "function"
+            ? BdApi.Data.load("WayAFK", "settings")
+            : (BdApi.loadData ? BdApi.loadData("WayAFK", "settings") : null);
+        WayAFKConfig = Object.assign({}, WayAFKConfig, saved || {});
         
         // Specify options (for abort controller) and interaction listener.
         let options = { signal: this.controller.signal };
