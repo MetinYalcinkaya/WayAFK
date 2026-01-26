@@ -31,13 +31,6 @@ module.exports = class WayAFK {
         // Specify options (for abort controller) and interaction listener.
         let options = { signal: this.controller.signal };
         let listener = () => this.handleInteraction();
-        
-        // Subscribe to all keydown/mousedown events with the listener.
-        document.addEventListener('keydown', listener, options);
-        document.addEventListener('mousedown', listener, options);
-        
-        // Start an interval that checks if we should go AFK ever 1000ms.
-        this.interval = window.setInterval(() => this.checkElapsed(), 1000);
 
         // Guard dispatcher
         if (!Dispatcher || typeof Dispatcher.dispatch !== "function") {
@@ -47,7 +40,14 @@ module.exports = class WayAFK {
             }
             return;
         }
-        
+
+        // Subscribe to all keydown/mousedown events with the listener.
+        document.addEventListener('keydown', listener, options);
+        document.addEventListener('mousedown', listener, options);
+
+        // Start an interval that checks if we should go AFK every 1000ms.
+        this.interval = window.setInterval(() => this.checkElapsed(), 1000);
+
         // Patches the dispatcher - if we are AFK and an AFK event is fired,
         // this will unconditionally rewrite it to be true.
         // (The Wayland bug seems to regularly generate false AFK events, so
