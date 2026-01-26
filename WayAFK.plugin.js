@@ -54,8 +54,8 @@ module.exports = class WayAFK {
         // this handles those without having to spam true AFK events.)
         BdApi.Patcher.before("WayAFK", Dispatcher, "dispatch", (that, args) => {
             const [ event ] = args;
-            if (event.type === "AFK" && this.afk) {
-                event.afk = true;
+            if (event.type === "IDLE" && this.afk) {
+                event.idle = true;
             }
         });
     }
@@ -82,8 +82,12 @@ module.exports = class WayAFK {
             
         if (elapsedTime >= WayAFKConfig.timeout && !this.afk) {
             console.log("[WayAFK] Spoofing AFK...");
-            Dispatcher.dispatch({type: 'AFK', afk: true});
-            this.afk = true;
+            this.afk = true;  // Set BEFORE dispatch to prevent loops on error
+            try {
+                Dispatcher.dispatch({type: 'IDLE', idle: true});
+            } catch (e) {
+                console.error("[WayAFK] Failed to dispatch:", e);
+            }
         }
     }
     
