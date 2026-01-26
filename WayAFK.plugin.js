@@ -20,14 +20,14 @@ module.exports = class WayAFK {
         this.lastInteraction = new Date();
         this.controller = new AbortController();
     }
-    
+
     start() {
         // Load configuration from disk.
         const saved = BdApi.Data && typeof BdApi.Data.load === "function"
             ? BdApi.Data.load("WayAFK", "settings")
             : (BdApi.loadData ? BdApi.loadData("WayAFK", "settings") : null);
         WayAFKConfig = Object.assign({}, WayAFKConfig, saved || {});
-        
+
         // Specify options (for abort controller) and interaction listener.
         let options = { signal: this.controller.signal };
         let listener = () => this.handleInteraction();
@@ -59,27 +59,27 @@ module.exports = class WayAFK {
             }
         });
     }
-    
+
     stop() {
         window.clearInterval(this.interval);
         Patcher.unpatchAll("WayAFK");
         this.controller.abort();
     }
-    
+
     handleInteraction() {
         if (this.afk) {
             console.log("[WayAFK] Exiting AFK...");
             this.afk = false;
         }
-    
+
         this.lastInteraction = new Date();
     }
-    
+
     checkElapsed() {
         let elapsedTime = new Date() - this.lastInteraction;
         elapsedTime /= 1000;
         elapsedTime = Math.round(elapsedTime);
-            
+
         if (elapsedTime >= WayAFKConfig.timeout && !this.afk) {
             console.log("[WayAFK] Spoofing AFK...");
             this.afk = true;  // Set BEFORE dispatch to prevent loops on error
@@ -90,7 +90,7 @@ module.exports = class WayAFK {
             }
         }
     }
-    
+
     getSettingsPanel() {
         const panel = document.createElement("div");
         panel.id = "WayAFK-settings";
@@ -107,7 +107,7 @@ module.exports = class WayAFK {
         timeoutInput.name = "buttonText";
 
         timeoutSetting.append(timeoutLabel, timeoutInput);
-        
+
         timeoutInput.value = WayAFKConfig.timeout;
         timeoutInput.addEventListener("change", () => {
             WayAFKConfig.timeout = timeoutInput.value;
