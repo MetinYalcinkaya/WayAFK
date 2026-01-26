@@ -6,7 +6,7 @@
 * @version 1.0.1
 */
 
-const Dispatcher = BdApi.Webpack.getByKeys("actionLogger");
+const Dispatcher = BdApi.Webpack.getStore("IdleStore")?._dispatcher;
 const Patcher = BdApi.Patcher;
 
 var WayAFKConfig = {
